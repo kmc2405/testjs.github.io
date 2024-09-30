@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>test</title>
+    <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+<style>
+    * {
+        padding: 0;
+        margin: 0;
+    }
+
+    body {
+        background: black;
+    }
+
+    .box {
+        position: absolute;
+        width: 100px;
+        height: 100px;
+        background: gray;
+        top:50%;
+        left:50%;
+        transform: translate(-50%, -50%);
+        border-radius: 50%;
+        display: block;
+        animation: fadeOut 1s ease-in-out forwards 3s;
+        z-index: 1;
+    }
+
+    .counterUp {
+        position: absolute;
+        font-size: 1.3rem;
+        top:50%;
+        left:50%;
+        transform: translate(-50%, -50%);
+        color: white;
+        animation: blink 1.7s ease-in-out infinite alternate;
+    }
+
+    .canvas {
+        position: absolute;
+        top:50%;
+        left:50%;
+        transform: translate(-50%, -50%);
+    }
+    @keyframes fadeOut {
+        0% {opacity: 1}
+        100% {opacity: 0;}
+    }
+
+    @keyframes blink {
+        0% {opacity: 1}
+        50% {opacity: 0;}
+        100% {opacity: 1;}
+    }
+</style>
+</head>
+<body>
+    <div class="box">
+       <div class="counterUp">0</div>
+    </div>
+
+    <canvas class="canvas" width="1000" height="1000"></canvas>
+
+<script type="importmap">
+{
+    "imports": {
+        "three": "https://unpkg.com/three@0.141.0/build/three.module.js",
+        "GLTFLoader" : "https://unpkg.com/three@0.141.0/examples/jsm/loaders/GLTFLoader.js"
+    }
+}
+</script>
+
+<script type="module">
+    import {GLTFLoader} from 'GLTFLoader';
+    import * as THREE from 'three';
+
+    let scene = new THREE.Scene();
+    let renderer = new THREE.WebGLRenderer({
+        canvas : document.querySelector('.canvas'),
+        antialias : true
+    }); 
+    renderer.outputEncoding = THREE.sRGBEncoding;
+
+    let camera = new THREE.PerspectiveCamera(35, 1);
+    camera.position.set(0,0,500);
+
+    scene.background = new THREE.Color('black')
+
+    let light = new THREE.DirectionalLight(0xffffff, 5);
+    light.position.set(10, 10, 10);
+    scene.add(light);
+
+    let loader = new GLTFLoader();
+    
+
+
+    setTimeout(() => {
+        loader.load('./earth/scene.gltf', function(gltf) {
+        scene.add(gltf.scene);
+        function animate() {
+            requestAnimationFrame(animate)
+            gltf.scene.rotation.y += 0.01
+            renderer.render(scene,camera);
+        }
+            animate()
+        });
+    }, 2500); 
+</script>
+
+
+<script>
+    setTimeout(function() {
+        var a = anime({
+        targets: '.counterUp',
+        innerHTML: [0, 100],
+        round: 1,
+        easing: 'linear',
+        duration: 1450
+     })       
+    },1000)
+</script>
+</body>
+</html>
